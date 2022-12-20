@@ -1,4 +1,4 @@
-#include "fvCFD.H"
+#include "fvCFD.H"          ////在OpenFOAM的求解器中，涉及到的构建时间、组建矩阵、有限体积离散、组建网格、量纲设置等有限体积库
 #include "dynamicFvMesh.H"
 #include "CMULES.H"
 #include "EulerDdtScheme.H"
@@ -23,7 +23,15 @@ int main(int argc, char *argv[])
     #include "createDynamicFvMesh.H"
     #include "initContinuityErrs.H"
     #include "createDyMControls.H"
-    #include "createFields.H"
+    #include "createFields.H"   //在这里建立mixture模型
+            /*Info<< "Reading transportProperties\n" << endl;
+            immiscibleIncompressibleTwoPhaseMixture mixture(U, phi); //调用incompressibleTwoPhaseMixture(U, phi),interfaceProperties(alpha1(), U, *this)构造函数
+            volScalarField& alpha1(mixture.alpha1());
+            volScalarField& alpha2(mixture.alpha2());
+            const dimensionedScalar& rho1 = mixture.rho1();
+            const dimensionedScalar& rho2 = mixture.rho2();*/
+
+
     #include "createAlphaFluxes.H"
     #include "initCorrectPhi.H"
     #include "createUfIfPresent.H"
