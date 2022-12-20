@@ -1,0 +1,42 @@
+void Foam::interfaceProperties::calculateK()
+{
+    const fvMesh& mesh = alpha1_.mesh();
+    const surfaceVectorField& Sf = mesh.Sf();
+ 
+    // Cell gradient of alpha
+    const volVectorField gradAlpha(fvc::grad(alpha1_, "nHat"));
+ 
+    // Interpolated face-gradient of alpha
+    surfaceVectorField gradAlphaf(fvc::interpolate(gradAlpha));
+ 
+    //gradAlphaf -=
+    //    (mesh.Sf()/mesh.magSf())
+    //   *(fvc::snGrad(alpha1_) - (mesh.Sf() & gradAlphaf)/mesh.magSf());
+ 
+    // Face unit interface normal
+    surfaceVectorField nHatfv(gradAlphaf/(mag(gradAlphaf) + deltaN_));
+    // surfaceVectorField nHatfv
+    // (
+    //     (gradAlphaf + deltaN_*vector(0, 0, 1)
+    //    *sign(gradAlphaf.component(vector::Z)))/(mag(gradAlphaf) + deltaN_)
+    // );
+    correctContactAngle(nHatfv.boundaryFieldRef(), gradAlphaf.boundaryField());
+ 
+    // Face unit interface normal flux
+    nHatf_ = nHatfv & Sf;
+ 
+    // Simple expression for curvature
+    K_ = -fvc::div(nHatf_);
+ 
+    // Complex expression for curvature.
+    // Correction is formally zero but numerically non-zero.
+    /*
+    volVectorField nHat(gradAlpha/(mag(gradAlpha) + deltaN_));
+    forAll(nHat.boundaryField(), patchi)
+    {
+        nHat.boundaryFieldRef()[patchi] = nHatfv.boundaryField()[patchi];
+    }
+ 
+    K_ = -fvc::div(nHatf_) + (nHat & fvc::grad(nHatfv) & nHat);
+    */
+}
