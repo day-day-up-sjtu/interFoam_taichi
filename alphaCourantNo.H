@@ -1,4 +1,4 @@
-scalar maxAlphaCo
+scalar maxAlphaCo       //在controlDict文件中定义
 (
     runTime.controlDict().get<scalar>("maxAlphaCo")
 );
