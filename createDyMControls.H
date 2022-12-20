@@ -1,4 +1,4 @@
-bool correctPhi
+bool correctPhi         //在fvSolution文件夹的pimple子字典定义
 (
     pimple.dict().getOrDefault("correctPhi", true)
 );
