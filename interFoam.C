@@ -1,6 +1,6 @@
-#include "fvCFD.H"          ////在OpenFOAM的求解器中，涉及到的构建时间、组建矩阵、有限体积离散、组建网格、量纲设置等有限体积库
+#include "fvCFD.H"          //在OpenFOAM的求解器中，涉及到的构建时间、组建矩阵、有限体积离散、组建网格、量纲设置等有限体积库
 #include "dynamicFvMesh.H"
-#include "CMULES.H"
+#include "CMULES.H"         //求解相体积分数的模型
 #include "EulerDdtScheme.H"
 #include "localEulerDdtScheme.H"
 #include "CrankNicolsonDdtScheme.H"
