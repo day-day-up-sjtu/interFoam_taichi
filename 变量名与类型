@@ -1,0 +1,7 @@
+tddtAlpha   ddtScheme   离散alpha的时间格式
+ddtAlpah    tddtAlpha的别名（引用）
+cnCoeff     scalar      时间折减系数（主要用于CN时间格式）
+phic        surfaceScalarField    面通量压缩系数，通过字典文件设置cAlpha参数，cAlpha()*mag(phi/mesh.magSf())，后面一项是面心速度？
+icAlpha     scalar      各向异性压缩贡献
+scAlpha     scalar       剪切压缩共吸纳
+icAlpha     scalar      各向异性压缩
