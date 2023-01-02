@@ -1,7 +1,16 @@
 tddtAlpha   ddtScheme   离散alpha的时间格式
 ddtAlpah    tddtAlpha的别名（引用）
+ocCoeff     scalar      偏心系数，与时间格式有关，Euler格式时为0，CN格式时指定求解
 cnCoeff     scalar      时间折减系数（主要用于CN时间格式）
 phic        surfaceScalarField    面通量压缩系数，通过字典文件设置cAlpha参数，cAlpha()*mag(phi/mesh.magSf())，后面一项是面心速度？
 icAlpha     scalar      各向异性压缩贡献
-scAlpha     scalar       剪切压缩共吸纳
-icAlpha     scalar      各向异性压缩
+scAlpha     scalar      剪切压缩贡献
+phicBf      surfaceScalarField::Boundary    phic边界场的可修改引用
+phiCN       surfaceScalarField    等于cnCoeff*phi + (1.0 - cnCoeff)*phi.oldTime()，时间格式为CN时，计算通量
+talphaPhi1UD  surfaceScalarField    迎风格式，alpha1通量
+alphaPhi10  talphaPhi1UD()    引用, 迎风格式的alpha通量
+phir        surfaceScalarField    phic*mixture.nHatf() nHatf为alpha梯度法向量，垂直与界面的界面压缩速度
+talphaPhi1Un  surfaceScalarField  里面涉及到flux函数，还需要进一步理解，flux函数嵌入了limit和weight相关内容
+
+
+
