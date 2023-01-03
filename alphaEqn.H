@@ -78,7 +78,7 @@
  
     // Do not compress interface at non-coupled boundary faces
     // (inlets, outlets etc.)
-    forAll(phic.boundaryField(), patchi)
+    forAll(phic.boundaryField(), patchi)            //边界处压缩速度为0
     {
         fvsPatchScalarField& phicp = phicBf[patchi];
  
@@ -96,11 +96,11 @@
         phiCN = cnCoeff*phi + (1.0 - cnCoeff)*phi.oldTime();
     }
  
-    if (MULESCorr)
+    if (MULESCorr)          //计算下一个时间不的alpha1
     {
         #include "alphaSuSp.H"
  
-        fvScalarMatrix alpha1Eqn
+        fvScalarMatrix alpha1Eqn        //dt(alpha)+U*div(akpha)=0,格式为upwind，其中gaussConvectionScheme，这个地方貌似没有考虑界面压缩
         (
             (
                 LTS
@@ -116,11 +116,11 @@
        // - fvm::Sp(fvc::ddt(dimensionedScalar("1", dimless, 1), mesh)
        //           + fvc::div(phiCN), alpha1)
          ==
-            Su + fvm::Sp(Sp + divU, alpha1)
+            Su + fvm::Sp(Sp + divU, alpha1)         //目前看su和sp都为0
         );
  
-        alpha1Eqn.solve();
- 
+        alpha1Eqn.solve();              //解出了初步的alpha1
+ 
         Info<< "Phase-1 volume fraction = "
             << alpha1.weightedAverage(mesh.Vsc()).value()
             << "  Min(" << alpha1.name() << ") = " << min(alpha1).value()
@@ -161,27 +161,26 @@
  
         surfaceScalarField phir(phic*mixture.nHatf());
  
-        tmp<surfaceScalarField> talphaPhi1Un
+        tmp<surfaceScalarField> talphaPhi1Un        //alpha通量，包括了界面处的特殊处理
         (
-            fvc::flux
+            fvc::flux                               //flux传入三个参数的算法还需要进一步查看
             (
                 phiCN(),
-                cnCoeff*alpha1 + (1.0 - cnCoeff)*alpha1.oldTime(),
+                cnCoeff*alpha1 + (1.0 - cnCoeff)*alpha1.oldTime(),      
                 alphaScheme
             )
           + fvc::flux
             (
                -fvc::flux(-phir, alpha2, alpharScheme),
                 alpha1,
-                alpharScheme
+                alpharScheme                                //alphar的对流项离散格式
             )
         );
  
         if (MULESCorr)
         {
-            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un() - alphaPhi10);
-            volScalarField alpha10("alpha10", alpha1);
- 
+            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un() - alphaPhi10);    //高阶格式减去低阶格式的通量差
+            volScalarField alpha10("alpha10", alpha1);          //储存修正后的值，
             MULES::correct
             (
                 geometricOneField(),
